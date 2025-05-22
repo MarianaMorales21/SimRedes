@@ -6,9 +6,9 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "Network Simulator",
-  description: "A web-based network simulator similar to Cisco Packet Tracer",
-    generator: 'v0.dev'
+  title: "Simulador Redes",
+  description: "Simulador de Redes",
+    generator: 'Next.js',
 }
 
 export default function RootLayout({

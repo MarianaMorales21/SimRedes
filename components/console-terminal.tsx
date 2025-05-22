@@ -16,7 +16,7 @@ interface TerminalLine {
   content: string
 }
 
-export function ConsoleTerminal({ device, devices }: ConsoleTerminalProps) {
+export function ConsoleTerminal({ device, devices = []}: ConsoleTerminalProps) {
   const [input, setInput] = useState("")
   const [history, setHistory] = useState<TerminalLine[]>([
     { type: "output", content: `Network Simulator Terminal v1.0` },
@@ -55,7 +55,7 @@ export function ConsoleTerminal({ device, devices }: ConsoleTerminalProps) {
     // Add output to history
     setHistory([
       ...newHistory,
-      ...output.map((line) => ({ type: "output", content: line } as TerminalLine)),
+      ...output.map((line) => ({ type: "output", content: line })),
     ])
 
     // Clear input
