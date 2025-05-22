@@ -40,7 +40,7 @@ interface DeviceConfigPanelProps {
   allDevices: NetworkDevice[]
 }
 
-export function DeviceConfigPanel({ device, onUpdateDevice, onDeleteDevice }: DeviceConfigPanelProps) {
+export function DeviceConfigPanel({ device, onUpdateDevice, onDeleteDevice, allDevices }: DeviceConfigPanelProps) {
   const [localDevice, setLocalDevice] = useState<NetworkDevice>(device)
   const toast = useToast()
 
