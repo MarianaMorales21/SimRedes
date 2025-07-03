@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useRef, useState, useEffect } from "react"
-import { Box, useToast } from "@chakra-ui/react"
+import { Box, useToast, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Select, useDisclosure } from "@chakra-ui/react"
 import type { NetworkDevice, Connection } from "@/types/network-types"
 import { NetworkNode } from "@/components/network-node"
 import { ConnectionLine } from "@/components/connection-line"
@@ -30,6 +30,12 @@ export function NetworkCanvas({
   const [draggedDevice, setDraggedDevice] = useState<NetworkDevice | null>(null)
   const toast = useToast()
 
+  // Estado para selección de interfaces y modal
+  const [pendingTarget, setPendingTarget] = useState<NetworkDevice | null>(null)
+  const [selectedSourceInterface, setSelectedSourceInterface] = useState<string>("")
+  const [selectedTargetInterface, setSelectedTargetInterface] = useState<string>("")
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   const handleMouseMove = (e: React.MouseEvent) => {
     if (canvasRef.current) {
       const rect = canvasRef.current.getBoundingClientRect()
@@ -52,7 +58,7 @@ export function NetworkCanvas({
   const handleStartConnection = (device: NetworkDevice) => {
     if (isSimulationRunning) {
       toast({
-        title: "Cannot modify network while simulation is running",
+        title: "No se puede modificar la red mientras la simulación está en ejecución",
         status: "warning",
         duration: 3000,
       })
@@ -61,20 +67,21 @@ export function NetworkCanvas({
     setConnectingFrom(device)
   }
 
+  // Modificado: ahora abre el modal para seleccionar interfaces
   const handleCompleteConnection = (targetDevice: NetworkDevice) => {
     if (!connectingFrom || connectingFrom.id === targetDevice.id) {
       setConnectingFrom(null)
       return
     }
 
-    // Check if connection already exists
+    // Verifica si ya existe la conexión
     const connectionExists =
       connectingFrom.connections.some((conn) => conn.targetId === targetDevice.id) ||
       targetDevice.connections.some((conn) => conn.targetId === connectingFrom.id)
 
     if (connectionExists) {
       toast({
-        title: "Connection already exists",
+        title: "La conexión ya existe",
         status: "warning",
         duration: 3000,
       })
@@ -82,11 +89,21 @@ export function NetworkCanvas({
       return
     }
 
-    // Create new connection
+    // Abre el modal de selección de interfaces
+    setPendingTarget(targetDevice)
+    setSelectedSourceInterface(connectingFrom.interfaces[0]?.name || "")
+    setSelectedTargetInterface(targetDevice.interfaces[0]?.name || "")
+    onOpen()
+  }
+
+  // Confirmar la conexión con las interfaces seleccionadas
+  const handleConfirmConnection = () => {
+    if (!connectingFrom || !pendingTarget) return
+
     const newConnection: Connection = {
-      targetId: targetDevice.id,
-      sourceInterface: connectingFrom.interfaces[0]?.name || "",
-      targetInterface: targetDevice.interfaces[0]?.name || "",
+      targetId: pendingTarget.id,
+      sourceInterface: selectedSourceInterface,
+      targetInterface: selectedTargetInterface,
       status: "up",
     }
 
@@ -97,16 +114,20 @@ export function NetworkCanvas({
 
     onUpdateDevice(updatedSourceDevice)
     setConnectingFrom(null)
+    setPendingTarget(null)
+    onClose()
   }
 
   const handleCancelConnection = () => {
     setConnectingFrom(null)
+    setPendingTarget(null)
+    onClose()
   }
 
   const handleStartDrag = (device: NetworkDevice) => {
     if (isSimulationRunning) {
       toast({
-        title: "Cannot move devices while simulation is running",
+        title: "No se pueden mover dispositivos mientras la simulación está en ejecución",
         status: "warning",
         duration: 3000,
       })
@@ -142,7 +163,7 @@ export function NetworkCanvas({
       onClick={handleCancelConnection}
       style={{ cursor: connectingFrom ? "crosshair" : "default" }}
     >
-      {/* Connection lines */}
+      {/* Líneas de conexión */}
       {devices.map((device) =>
         device.connections.map((connection, index) => {
           const targetDevice = devices.find((d) => d.id === connection.targetId)
@@ -161,7 +182,7 @@ export function NetworkCanvas({
         }),
       )}
 
-      {/* Temporary connection line when creating a new connection */}
+      {/* Línea de conexión temporal al crear una nueva conexión */}
       {connectingFrom && (
         <ConnectionLine
           sourceX={connectingFrom.x}
@@ -172,7 +193,7 @@ export function NetworkCanvas({
         />
       )}
 
-      {/* Device nodes */}
+      {/* Nodos de dispositivos */}
       {devices.map((device) => (
         <NetworkNode
           key={device.id}
@@ -185,6 +206,48 @@ export function NetworkCanvas({
           isSimulationRunning={isSimulationRunning}
         />
       ))}
+
+      {/* Modal para seleccionar interfaces */}
+      <Modal isOpen={isOpen} onClose={handleCancelConnection} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Seleccionar interfaces para la conexión</ModalHeader>
+          <ModalBody>
+            <Box mb={3}>
+              <strong>Interfaz de origen:</strong>
+              <Select
+                value={selectedSourceInterface}
+                onChange={e => setSelectedSourceInterface(e.target.value)}
+                mt={1}
+              >
+                {connectingFrom?.interfaces.map((iface) => (
+                  <option key={iface.name} value={iface.name}>{iface.name}</option>
+                ))}
+              </Select>
+            </Box>
+            <Box>
+              <strong>Interfaz de destino:</strong>
+              <Select
+                value={selectedTargetInterface}
+                onChange={e => setSelectedTargetInterface(e.target.value)}
+                mt={1}
+              >
+                {pendingTarget?.interfaces.map((iface) => (
+                  <option key={iface.name} value={iface.name}>{iface.name}</option>
+                ))}
+              </Select>
+            </Box>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleConfirmConnection}>
+              Conectar
+            </Button>
+            <Button variant="ghost" onClick={handleCancelConnection}>
+              Cancelar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   )
 }
