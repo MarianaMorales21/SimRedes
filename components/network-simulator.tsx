@@ -68,13 +68,13 @@ export function NetworkSimulator() {
   }
 
   const handleDeleteDevice = (id: string) => {
-    // Remove connections to this device
+    // Eliminar conexiones a este dispositivo
     const updatedDevices = devices.map((device) => ({
       ...device,
       connections: device.connections.filter((conn) => conn.targetId !== id),
     }))
 
-    // Remove the device itself
+    // Eliminar el propio dispositivo
     setDevices(updatedDevices.filter((device) => device.id !== id))
 
     if (selectedDevice?.id === id) {
@@ -85,7 +85,7 @@ export function NetworkSimulator() {
 
   const handleToggleSimulation = () => {
     setIsSimulationRunning(!isSimulationRunning)
-    // In a real implementation, this would start/stop the network simulation logic
+    // En una implementación real, esto iniciaría/detendría la lógica de simulación de red
   }
 
   const handleSaveTopology = () => {
@@ -94,7 +94,7 @@ export function NetworkSimulator() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = "network-topology.json"
+    a.download = "topologia-red.json"
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -108,7 +108,7 @@ export function NetworkSimulator() {
           const loadedDevices = JSON.parse(e.target?.result as string) as NetworkDevice[]
           setDevices(loadedDevices)
         } catch (error) {
-          console.error("Failed to parse topology file:", error)
+          console.error("No se pudo analizar el archivo de topología:", error)
         }
       }
       reader.readAsText(file)
@@ -117,21 +117,21 @@ export function NetworkSimulator() {
 
   return (
     <Flex direction="column" h="100vh">
-      {/* Top Navigation */}
+      {/* Navegación superior */}
       <Flex as="nav" bg="blue.600" color="white" p={4} justifyContent="space-between" alignItems="center">
-        <Heading size="md">Network Simulator</Heading>
+        <Heading size="md">Simulador para redes</Heading>
         <HStack spacing={4}>
           <Button
             leftIcon={isSimulationRunning ? <Minimize /> : <Maximize />}
             colorScheme={isSimulationRunning ? "red" : "green"}
             onClick={handleToggleSimulation}
           >
-            {isSimulationRunning ? "Stop Simulation" : "Start Simulation"}
+            {isSimulationRunning ? "Detener simulación" : "Iniciar simulación"}
           </Button>
-          <Tooltip label="Save Topology">
-            <IconButton aria-label="Save Topology" icon={<Save />} onClick={handleSaveTopology} />
+          <Tooltip label="Guardar topología">
+            <IconButton aria-label="Guardar topología" icon={<Save />} onClick={handleSaveTopology} />
           </Tooltip>
-          <Tooltip label="Load Topology">
+          <Tooltip label="Cargar topología">
             <Box position="relative">
               <input
                 type="file"
@@ -146,17 +146,17 @@ export function NetworkSimulator() {
                 }}
                 onChange={handleLoadTopology}
               />
-              <IconButton aria-label="Load Topology" icon={<Upload />} />
+              <IconButton aria-label="Cargar topología" icon={<Upload />} />
             </Box>
           </Tooltip>
         </HStack>
       </Flex>
 
       <Flex flex={1} overflow="hidden">
-        {/* Left Sidebar - Device Panel */}
+        {/* Barra lateral izquierda - Panel de dispositivos */}
         <DevicePanel onAddDevice={handleAddDevice} />
 
-        {/* Main Canvas */}
+        {/* Lienzo principal */}
         <Box flex={1} ref={canvasRef} position="relative" bg="gray.100" overflow="hidden">
           <NetworkCanvas
             devices={devices}
@@ -168,18 +168,19 @@ export function NetworkSimulator() {
         </Box>
       </Flex>
 
-      {/* Device Configuration Drawer */}
+      {/* Cajón de configuración del dispositivo */}
       <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="md">
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>{selectedDevice ? `Configure ${selectedDevice.name}` : "Device Configuration"}</DrawerHeader>
+          <DrawerHeader>{selectedDevice ? `Configurar ${selectedDevice.name}` : "Configuración del dispositivo"}</DrawerHeader>
           <DrawerBody>
             {selectedDevice && (
               <DeviceConfigPanel
                 device={selectedDevice}
                 onUpdateDevice={handleUpdateDevice}
                 onDeleteDevice={handleDeleteDevice}
+                allDevices={devices}
               />
             )}
           </DrawerBody>
@@ -189,7 +190,7 @@ export function NetworkSimulator() {
   )
 }
 
-// Helper function to generate a random MAC address
+// Función auxiliar para generar una dirección MAC aleatoria
 function generateMac() {
   return Array(6)
     .fill(0)
