@@ -98,8 +98,8 @@ export function DeviceConfigPanel({ device, onUpdateDevice, onDeleteDevice, allD
 
     if (isUsedInConnection) {
       toast({
-        title: "Cannot delete interface",
-        description: "This interface is used in a connection. Remove the connection first.",
+        title: "No se puede eliminar la interfaz",
+        description: "Esta interfaz se utiliza en una conexión. Primero, elimine la conexión..",
         status: "error",
         duration: 3000,
       })
@@ -118,7 +118,7 @@ export function DeviceConfigPanel({ device, onUpdateDevice, onDeleteDevice, allD
   const handleSaveChanges = () => {
     onUpdateDevice(localDevice)
     toast({
-      title: "Configuration saved",
+      title: "Configuración guardada",
       status: "success",
       duration: 2000,
     })
@@ -138,13 +138,13 @@ export function DeviceConfigPanel({ device, onUpdateDevice, onDeleteDevice, allD
       <Divider />
 
       <FormControl>
-        <FormLabel>Device Name</FormLabel>
+        <FormLabel>Nombre del dispositivo</FormLabel>
         <Input value={localDevice.name} onChange={handleNameChange} />
       </FormControl>
 
       <FormControl display="flex" alignItems="center">
         <FormLabel mb="0">
-          Power Status:{" "}
+          Estado de energía:{" "}
           <Badge colorScheme={localDevice.status === "on" ? "green" : "red"}>
             {localDevice.status === "on" ? "ON" : "OFF"}
           </Badge>
@@ -157,9 +157,9 @@ export function DeviceConfigPanel({ device, onUpdateDevice, onDeleteDevice, allD
       <Tabs variant="enclosed" isFitted>
         <TabList>
           <Tab>Interfaces</Tab>
-          <Tab>Connections</Tab>
-          {localDevice.type === "computer" && <Tab>Console</Tab>}
-          {localDevice.type === "router" && <Tab>Routing</Tab>}
+          <Tab>Conexiones</Tab>
+          {localDevice.type === "computer" && <Tab>Consola</Tab>}
+          {localDevice.type === "router" && <Tab>Enrutamiento</Tab>}
         </TabList>
 
         <TabPanels>
@@ -167,130 +167,130 @@ export function DeviceConfigPanel({ device, onUpdateDevice, onDeleteDevice, allD
           <TabPanel>
             <VStack spacing={4} align="stretch">
               <HStack justifyContent="space-between">
-                <Heading size="sm">Network Interfaces</Heading>
+                <Heading size="sm">Interfaces de red</Heading>
                 <Button leftIcon={<Plus size={16} />} size="sm" onClick={handleAddInterface} colorScheme="blue">
-                  Add Interface
+                  Agregar interfaz
                 </Button>
               </HStack>
 
               <Accordion allowMultiple>
-               {localDevice.interfaces.map((iface, index) => (
-  <AccordionItem key={index}>
-    <h2>
-      <AccordionButton>
-        <Box flex="1" textAlign="left">
-          {iface.name}
-        </Box>
-        <AccordionIcon />
-      </AccordionButton>
-    </h2>
-    <AccordionPanel pb={4}>
-      <VStack spacing={3} align="stretch">
-        <FormControl>
-          <FormLabel fontSize="sm">Interface Name</FormLabel>
-          <Input
-            size="sm"
-            value={iface.name}
-            onChange={(e) =>
-              handleInterfaceChange(
-                index,
-                "name",
-                e.target.value
-              )
-            }
-          />
-        </FormControl>
+                {localDevice.interfaces.map((iface, index) => (
+                  <AccordionItem key={index}>
+                    <h2>
+                      <AccordionButton>
+                        <Box flex="1" textAlign="left">
+                          {iface.name}
+                        </Box>
+                        <AccordionIcon />
+                      </AccordionButton>
+                    </h2>
+                    <AccordionPanel pb={4}>
+                      <VStack spacing={3} align="stretch">
+                        <FormControl>
+                          <FormLabel fontSize="sm">Nombre de interfaz</FormLabel>
+                          <Input
+                            size="sm"
+                            value={iface.name}
+                            onChange={(e) =>
+                              handleInterfaceChange(
+                                index,
+                                "name",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </FormControl>
 
-        <FormControl>
-          <FormLabel fontSize="sm">MAC Address</FormLabel>
-          <Input
-            size="sm"
-            value={iface.mac}
-            onChange={(e) =>
-              handleInterfaceChange(
-                index,
-                "mac",
-                e.target.value
-              )
-            }
-          />
-        </FormControl>
+                        <FormControl>
+                          <FormLabel fontSize="sm">Dirección MAC</FormLabel>
+                          <Input
+                            size="sm"
+                            value={iface.mac}
+                            onChange={(e) =>
+                              handleInterfaceChange(
+                                index,
+                                "mac",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </FormControl>
 
-        {/* Solo pedir IP/máscara en routers, computadoras, o si es VLAN en switch */}
-        {(localDevice.type === "router" ||
-          localDevice.type === "computer" ||
-          (localDevice.type === "switch" && iface.name.toLowerCase().includes("vlan"))
-        ) && (
-          <>
-            <FormControl>
-              <FormLabel fontSize="sm">IP Address</FormLabel>
-              <Input
-                size="sm"
-                value={iface.ip || ""}
-                onChange={(e) =>
-                  handleInterfaceChange(
-                    index,
-                    "ip",
-                    e.target.value
-                  )
-                }
-                placeholder="192.168.1.1"
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel fontSize="sm">Subnet Mask</FormLabel>
-              <Input
-                size="sm"
-                value={iface.subnet || ""}
-                onChange={(e) =>
-                  handleInterfaceChange(
-                    index,
-                    "subnet",
-                    e.target.value
-                  )
-                }
-                placeholder="255.255.255.0"
-              />
-            </FormControl>
-          </>
-        )}
+                        {/* Solo pedir IP/máscara en routers, computadoras, o si es VLAN en switch */}
+                        {(localDevice.type === "router" ||
+                          localDevice.type === "computer" ||
+                          (localDevice.type === "switch" && iface.name.toLowerCase().includes("vlan"))
+                        ) && (
+                            <>
+                              <FormControl>
+                                <FormLabel fontSize="sm">Dirección IP</FormLabel>
+                                <Input
+                                  size="sm"
+                                  value={iface.ip || ""}
+                                  onChange={(e) =>
+                                    handleInterfaceChange(
+                                      index,
+                                      "ip",
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="192.168.1.1"
+                                />
+                              </FormControl>
+                              <FormControl>
+                                <FormLabel fontSize="sm">Máscara de subred</FormLabel>
+                                <Input
+                                  size="sm"
+                                  value={iface.subnet || ""}
+                                  onChange={(e) =>
+                                    handleInterfaceChange(
+                                      index,
+                                      "subnet",
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="255.255.255.0"
+                                />
+                              </FormControl>
+                            </>
+                          )}
 
-        {localDevice.type === "computer" && (
-          <FormControl>
-            <FormLabel fontSize="sm">Default Gateway</FormLabel>
-            <Input
-              size="sm"
-              value={iface.gateway || ""}
-              onChange={(e) =>
-                handleInterfaceChange(
-                  index,
-                  "gateway",
-                  e.target.value
-                )
-              }
-              placeholder="192.168.1.254"
-            />
-          </FormControl>
-        )}
+                        {localDevice.type === "computer" && (
+                          <FormControl>
+                            <FormLabel fontSize="sm">Puerta de enlace</FormLabel>
+                            <Input
+                              size="sm"
+                              value={iface.gateway || ""}
+                              onChange={(e) =>
+                                handleInterfaceChange(
+                                  index,
+                                  "gateway",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="192.168.1.254"
+                            />
+                          </FormControl>
+                        )}
 
-        <Button
-          leftIcon={<Trash2 size={16} />}
-          colorScheme="red"
-          variant="outline"
-          size="sm"
-          onClick={() => handleDeleteInterface(index)}
-        >
-          Delete Interface
-        </Button>
-      </VStack>
-    </AccordionPanel>
-  </AccordionItem>
-))}
+                        <Button
+                          leftIcon={<Trash2 size={16} />}
+                          colorScheme="red"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteInterface(index)}
+                        >
+                          Eliminar interfaz
+                        </Button>
+                      </VStack>
+                    </AccordionPanel>
+                  </AccordionItem>
+                ))}
               </Accordion>
 
               {localDevice.interfaces.length === 0 && (
                 <Text color="gray.500" textAlign="center">
-                  No interfaces configured
+                  No se han configurado interfaces
                 </Text>
               )}
             </VStack>
@@ -299,7 +299,7 @@ export function DeviceConfigPanel({ device, onUpdateDevice, onDeleteDevice, allD
           {/* Connections Tab */}
           <TabPanel>
             <VStack spacing={4} align="stretch">
-              <Heading size="sm">Active Connections</Heading>
+              <Heading size="sm">Conexiones Activas</Heading>
 
               {localDevice.connections.length > 0 ? (
                 localDevice.connections.map((connection, index) => (
@@ -339,7 +339,7 @@ export function DeviceConfigPanel({ device, onUpdateDevice, onDeleteDevice, allD
                 ))
               ) : (
                 <Text color="gray.500" textAlign="center">
-                  No active connections
+                  No hay conexiones activas
                 </Text>
               )}
             </VStack>
@@ -348,7 +348,7 @@ export function DeviceConfigPanel({ device, onUpdateDevice, onDeleteDevice, allD
           {/* Console Tab (for computers) */}
           {localDevice.type === "computer" && (
             <TabPanel>
-<ConsoleTerminal device={localDevice} devices={allDevices} />
+              <ConsoleTerminal device={localDevice} devices={allDevices} />
             </TabPanel>
           )}
 
@@ -356,11 +356,11 @@ export function DeviceConfigPanel({ device, onUpdateDevice, onDeleteDevice, allD
           {localDevice.type === "router" && (
             <TabPanel>
               <VStack spacing={4} align="stretch">
-                <Heading size="sm">Routing Table</Heading>
+                <Heading size="sm">Tabla de enrutamiento</Heading>
 
                 <Box borderWidth="1px" borderRadius="md" p={3}>
                   <Text fontFamily="mono" fontSize="sm" whiteSpace="pre">
-                    Destination Gateway Flags Interface
+                    Interfaz de Banderas de Puerta de Enlace de Destino
                     {"\n"}
                     0.0.0.0/0 192.168.1.1 UG GigabitEthernet0/0
                     {"\n"}
@@ -369,7 +369,7 @@ export function DeviceConfigPanel({ device, onUpdateDevice, onDeleteDevice, allD
                 </Box>
 
                 <Button leftIcon={<Plus size={16} />} colorScheme="blue" size="sm">
-                  Add Route
+                  Agregar ruta
                 </Button>
               </VStack>
             </TabPanel>
@@ -381,11 +381,11 @@ export function DeviceConfigPanel({ device, onUpdateDevice, onDeleteDevice, allD
 
       <HStack spacing={4} justifyContent="space-between">
         <Button colorScheme="red" leftIcon={<Trash2 />} onClick={handleDelete}>
-          Delete Device
+          Eliminar dispositivo
         </Button>
 
         <Button colorScheme="blue" onClick={handleSaveChanges}>
-          Save Changes
+          Guardar cambios
         </Button>
       </HStack>
     </VStack>

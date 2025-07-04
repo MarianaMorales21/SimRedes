@@ -1,13 +1,18 @@
 "use client"
+import { useRouter } from 'next/navigation'
+
 
 import { Box, VStack, Heading, Button, Tooltip, Icon, Divider, Text } from "@chakra-ui/react"
-import { Server, Monitor, Network, NetworkIcon as Hub } from "lucide-react"
+import { Server, Monitor, Network, NetworkIcon as Hub, Home } from "lucide-react"
 
 interface DevicePanelProps {
   onAddDevice: (type: string) => void
 }
 
 export function DevicePanel({ onAddDevice }: DevicePanelProps) {
+
+  const router = useRouter()
+
   const devices = [
     { type: "router", icon: Server, label: "Router" },
     { type: "switch", icon: Network, label: "Switch" },
@@ -35,7 +40,19 @@ export function DevicePanel({ onAddDevice }: DevicePanelProps) {
             </Button>
           </Tooltip>
         ))}
+
+        {/* 🔽 Nuevo botón de navegación */}
+        <Button
+          leftIcon={<Icon as={Home} />}
+          justifyContent="flex-start"
+          variant="solid"
+          colorScheme="blue"
+          onClick={() => router.push("/informacion")}
+        >
+          Información
+        </Button>
       </VStack>
+
       <Divider my={4} />
       <Text fontSize="xs" color="gray.500" textAlign="center">
         Arrastra y suelta dispositivos sobre el lienzo para construir tu red

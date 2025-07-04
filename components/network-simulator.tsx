@@ -44,8 +44,8 @@ export function NetworkSimulator() {
           ? [{ name: "GigabitEthernet0/0", ip: "", subnet: "", mac: generateMac() }]
           : type === "switch"
             ? Array(8)
-                .fill(null)
-                .map((_, i) => ({ name: `FastEthernet0/${i}`, mac: generateMac() }))
+              .fill(null)
+              .map((_, i) => ({ name: `FastEthernet0/${i}`, mac: generateMac() }))
             : type === "computer"
               ? [{ name: "Ethernet0", ip: "", subnet: "", mac: generateMac(), gateway: "" }]
               : [],
@@ -128,27 +128,6 @@ export function NetworkSimulator() {
           >
             {isSimulationRunning ? "Detener simulación" : "Iniciar simulación"}
           </Button>
-          <Tooltip label="Guardar topología">
-            <IconButton aria-label="Guardar topología" icon={<Save />} onClick={handleSaveTopology} />
-          </Tooltip>
-          <Tooltip label="Cargar topología">
-            <Box position="relative">
-              <input
-                type="file"
-                id="topology-upload"
-                accept=".json"
-                style={{
-                  position: "absolute",
-                  width: "100%",
-                  height: "100%",
-                  opacity: 0,
-                  cursor: "pointer",
-                }}
-                onChange={handleLoadTopology}
-              />
-              <IconButton aria-label="Cargar topología" icon={<Upload />} />
-            </Box>
-          </Tooltip>
         </HStack>
       </Flex>
 
